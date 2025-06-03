@@ -1,6 +1,8 @@
 package com.rockettsttudio.library.dto;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,16 +26,16 @@ public class CreateBookRequest {
     @Size(min = 10, max = 13, message = "ISBN must be between 10 and 13 characters")
     private String isbn;
 
-    @NotBlank(message = "Publication year is required")
-    @Size(min = 4, max = 4, message = "Publication year must be a 4-digit number")
-    private int publicationYear;
+    @NotNull(message = "Publication year is required")
+    @Min(value = 1000, message = "Publication year must be a valid year")
+    private Integer publicationYear;
 
     @Size(max = 20, message = "Language cannot exceed 20 characters")
     private String language;
 
-    @NotBlank(message = "Page count is required")
-    @Size(min = 1, max = 5, message = "Page count must be between 1 and 5 digits")
-    private int pages;
+    @NotNull(message = "Page count is required")
+    @Min(value = 1, message = "Page count must be at least 1")
+    private Integer pages;
 
     @NotBlank(message = "Genre is required")
     @Size(min = 3, max = 50, message = "Genre must be between 3 and 50 characters")
