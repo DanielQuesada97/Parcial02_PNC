@@ -45,7 +45,7 @@
 			"response": []
 		},
 		{
-			"name": "addProduct",
+			"name": "addBook",
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -84,7 +84,7 @@
 			"response": []
 		},
 		{
-			"name": "getAllProducts",
+			"name": "getAllBooks",
 			"request": {
 				"method": "GET",
 				"header": []
@@ -92,7 +92,7 @@
 			"response": []
 		},
 		{
-			"name": "getProductById",
+			"name": "getBookById",
 			"request": {
 				"method": "GET",
 				"header": []
