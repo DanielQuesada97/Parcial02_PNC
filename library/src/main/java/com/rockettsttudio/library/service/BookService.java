@@ -2,6 +2,7 @@ package com.rockettsttudio.library.service;
 
 import com.rockettsttudio.library.dto.BookResponse;
 import com.rockettsttudio.library.dto.CreateBookRequest;
+import com.rockettsttudio.library.dto.UpdateBookRequest;
 import com.rockettsttudio.library.entity.Book;
 import com.rockettsttudio.library.exception.ResourceNotFoundException;
 import com.rockettsttudio.library.repository.BookRepository;
@@ -20,6 +21,10 @@ public class BookService {
     private final BookRepository bookRepository;
 
     public BookResponse createBook(CreateBookRequest request) {
+        if (bookRepository.existsByIsbn(request.getIsbn())) {
+            throw new IllegalArgumentException("A book with this ISBN already exists");
+        }
+
         Book book = new Book();
         book.setTitle(request.getTitle());
         book.setAuthor(request.getAuthor());
@@ -33,6 +38,21 @@ public class BookService {
         return mapToResponse(savedBook);
     }
 
+    public BookResponse updateBook(UUID id, UpdateBookRequest request) {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
+
+        if (request.getTitle() != null) {
+            book.setTitle(request.getTitle());
+        }
+        if (request.getLanguage() != null) {
+            book.setLanguage(request.getLanguage());
+        }
+
+        Book updatedBook = bookRepository.save(book);
+        return mapToResponse(updatedBook);
+    }
+
     @Transactional(readOnly = true)
     public List<BookResponse> getAllBooks() {
         return bookRepository.findAll().stream()
@@ -44,6 +64,13 @@ public class BookService {
     public BookResponse getBookById(UUID id) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
+        return mapToResponse(book);
+    }
+
+    @Transactional(readOnly = true)
+    public BookResponse getBookByIsbn(String isbn) {
+        Book book = bookRepository.findByIsbn(isbn)
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with ISBN: " + isbn));
         return mapToResponse(book);
     }
 
@@ -64,6 +91,27 @@ public class BookService {
     @Transactional(readOnly = true)
     public List<BookResponse> searchByGenre(String genre) {
         return bookRepository.findByGenreContainingIgnoreCase(genre).stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookResponse> searchByAuthor(String author) {
+        return bookRepository.findByAuthorContainingIgnoreCase(author).stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookResponse> searchByLanguage(String language) {
+        return bookRepository.findByLanguageContainingIgnoreCase(language).stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookResponse> searchByPageRange(int minPages, int maxPages) {
+        return bookRepository.findByPagesBetween(minPages, maxPages).stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }

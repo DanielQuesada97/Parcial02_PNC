@@ -1,38 +1,43 @@
 package com.rockettsttudio.library.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
-import java.time.ZonedDateTime;
+import java.time.Year;
 import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "book")
+@Table(name = "books")
 public class Book {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
 
-    @Column(nullable = false)
+    @NotBlank(message = "Title is required")
+    @Pattern(regexp = "^(?!\\d+$).*$", message = "Title cannot contain only numbers")
     private String title;
 
-    @Column(nullable = false)
+    @NotBlank(message = "Author is required")
     private String author;
 
-    @Column(nullable = false, unique = true)
+    @NotBlank(message = "ISBN is required")
+    @Column(unique = true)
     private String isbn;
 
-    @Column(nullable = false)
+    @Min(value = 1900, message = "Publication year must be at least 1900")
+    @Max(value = 2024, message = "Publication year cannot be greater than current year")
     private int publicationYear;
 
-    @Column(nullable = true)
+    @NotBlank(message = "Language is required")
     private String language;
 
-    @Column(nullable = false)
+    @Min(value = 11, message = "Number of pages must be greater than 10")
     private int pages;
 
-    @Column(nullable = false)
+    @NotBlank(message = "Genre is required")
     private String genre;
-
 }
