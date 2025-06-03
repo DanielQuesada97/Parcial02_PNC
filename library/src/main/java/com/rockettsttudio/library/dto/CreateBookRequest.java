@@ -1,5 +1,6 @@
 package com.rockettsttudio.library.dto;
 
+import com.rockettsttudio.library.validation.ISBN;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -23,7 +24,7 @@ public class CreateBookRequest {
     private String author;
 
     @NotBlank(message = "ISBN is required")
-    @Size(min = 10, max = 13, message = "ISBN must be between 10 and 13 characters")
+    @ISBN(message = "Invalid ISBN format. Must be in the format XXX-XXXXXXXXXX or XXXXXXXXXXXX")
     private String isbn;
 
     @NotNull(message = "Publication year is required")
